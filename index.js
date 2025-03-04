@@ -16,7 +16,7 @@ if (IS_OFFLINE === 'true') {
 };
  
 app.get('/', function (req, res) {
-  res.send('OK')
+  res.status(200).send('OK')
 })
 
 app.get('/get', function (req, res) {
@@ -29,22 +29,22 @@ app.get('/get', function (req, res) {
 
   dynamoDb.get(params, (error, result) => {
     if (error) {
-      console.log('– – – –')
-      console.log(error);
-      console.log('– – – –')
+      console.warn('Failed with error: ', error);
       res.status(400).send('CRASHED');
     }
 
     if (result.Item) {
       const {command} = result.Item;
-      res.send(command);
+      console.log('Fetched status: ', command);
+      res.status(200).send(command);
     } else {
-      res.status(404).send("Entry not found");
+      console.warn('Failed with: not found item');
+      res.status(404).send("NOT FOUND");
     }
   });
 })
 
-app.get('/set/:command', function (req, res) {
+app.all('/set/:command', function (req, res) {
   const command = req.params.command
 	
   const params = {
@@ -57,13 +57,12 @@ app.get('/set/:command', function (req, res) {
  
   dynamoDb.put(params, (error) => {
     if (error) {
-      console.log('– – – –')
-      console.log(error);
-      console.log('– – – –')
+      console.warn('Failed with error: ', error);
       res.status(400).send('CRASHED');
     }
 
-    res.send(command)
+    console.log('Set status: ', command);
+    res.status(200).send(command)
   });
 })
  
