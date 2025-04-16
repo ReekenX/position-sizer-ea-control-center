@@ -65,5 +65,12 @@ app.all('/set/:command', function (req, res) {
     res.status(200).send(command)
   });
 })
+
+app.all('/log', function (req, res) {
+  console.log('Request params:', req.params);
+  console.log('Request query:', req.query);
+  console.log('Request body:', req.body);
+  res.status(200).send('OK');
+})
  
 module.exports.handler = serverless(app)

@@ -50,6 +50,11 @@ functions:
     events:
       - http: 'GET /set/{proxy+}'
       - http: 'POST /set/{proxy+}'
+  log:
+    handler: index.handler
+    events:
+      - http: 'GET /log'
+      - http: 'POST /log'
 
 resources:
   Resources:
