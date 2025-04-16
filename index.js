@@ -2,6 +2,9 @@ const serverless = require('serverless-http')
 const express = require('express')
 const AWS = require('aws-sdk')
 const app = express()
+const bodyParser = require('body-parser')
+
+app.use(express.json());
 
 const STATUS_TABLE = process.env.STATUS_TABLE;
 const IS_OFFLINE = process.env.IS_OFFLINE;
@@ -44,9 +47,7 @@ app.get('/get', function (req, res) {
   });
 })
 
-app.all('/set/:command', function (req, res) {
-  const command = req.params.command
-	
+function setCommand(command, res) {
   const params = {
     TableName: STATUS_TABLE,
     Item: {
@@ -61,16 +62,18 @@ app.all('/set/:command', function (req, res) {
       res.status(400).send('CRASHED');
     }
 
-    console.log('Set status: ', command);
+    console.log('New status: ', command);
+
     res.status(200).send(command)
   });
+}
+
+app.all('/set/:command', function (req, res) {
+  setCommand(req.params.command, res)
 })
 
 app.all('/log', function (req, res) {
-  console.log('Request params:', req.params);
-  console.log('Request query:', req.query);
-  console.log('Request body:', req.body);
-  res.status(200).send('OK');
+  setCommand(req.body.command, res)
 })
  
 module.exports.handler = serverless(app)
