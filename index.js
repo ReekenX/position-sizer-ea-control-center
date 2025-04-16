@@ -52,7 +52,7 @@ function setCommand(command, res) {
     TableName: STATUS_TABLE,
     Item: {
       envName: 'development',
-      command,
+      command: command.toUpperCase(),
     },
   };
  
